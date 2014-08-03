@@ -1,0 +1,7 @@
+.tox/
+*.egg-info/
+.env/
+.idea/
+.coverage
+target/
+*.iml

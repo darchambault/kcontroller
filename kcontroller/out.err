@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/Users/darchambault/Code/kcontroller/kcontroller/teensy.py", line 122, in <module>
+    main()
+  File "/Users/darchambault/Code/kcontroller/kcontroller/teensy.py", line 92, in main
+    dev.write(1, raw, 0, 100)
+  File "/Users/darchambault/Code/kcontroller/.tox/py27/lib/python2.7/site-packages/usb/core.py", line 625, in write
+    fn = fn_map[self._ctx.get_endpoint_type(self, endpoint, intf)]
+  File "/Users/darchambault/Code/kcontroller/.tox/py27/lib/python2.7/site-packages/usb/core.py", line 180, in get_endpoint_type
+    etype = util.endpoint_type(e.bmAttributes)
+AttributeError: 'NoneType' object has no attribute 'bmAttributes'

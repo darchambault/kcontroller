@@ -1,0 +1,10 @@
+description "kcontroller daemon"
+
+start on runlevel [2345]
+stop on runlevel [!2345]
+
+respawn
+
+script
+   exec /opt/kcontroller/bin/kcontroller /etc/kcontroller.conf
+end script
