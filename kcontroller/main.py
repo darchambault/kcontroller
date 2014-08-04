@@ -20,7 +20,9 @@ def run():
     logging.info("Starting up")
 
     panels = PanelPool()
-    panels.add(MainControlPanel(FileIOHandler(os.path.join(tempfile.gettempdir, "main_control_panel"))))
+    in_filename = os.path.join(tempfile.gettempdir(), "main_control_panel.in")
+    out_filename = os.path.join(tempfile.gettempdir(), "main_control_panel.out")
+    panels.add(MainControlPanel(FileIOHandler(in_filename, out_filename)))
     panels.start()
 
     exchange = SocketExchange(1414)

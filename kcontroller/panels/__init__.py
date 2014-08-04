@@ -12,11 +12,11 @@ class Panel(KProcess):
 
     def run(self):
         logging.info("%s starting" % self.__class__.__name__)
-        self._init()
         try:
             while True:
                 self._check_for_exchange_packets()
-                self._loop()
+                changes = self._io_handler.recv()
+                self._handle_io_changes(changes)
                 sleep(0.05)
         except KeyboardInterrupt:
             logging.info("Received SIGINT signal, shutting down...")
@@ -60,6 +60,12 @@ class Panel(KProcess):
         else:
             logging.warning("received unexpected update for dataref %s" % dataref)
 
+    def _handle_io_changes(self, changes):
+        """
+        Called on every main loop iteration with any/all IO changes - to be overridden in class implementations
+        """
+        pass
+
     def _exchange_available(self):
         """
         Called when exchange becomes available - to be overridden in class implementations
@@ -69,18 +75,6 @@ class Panel(KProcess):
     def _exchange_unavailable(self):
         """
         Called when exchange becomes available - to be overridden in class implementations
-        """
-        pass
-
-    def _loop(self):
-        """
-        Single loop execution, called repeatedly - to be overridden in class implementations
-        """
-        pass
-
-    def _init(self):
-        """
-        Called before starting the loop - to be overridden in class implementations
         """
         pass
 
