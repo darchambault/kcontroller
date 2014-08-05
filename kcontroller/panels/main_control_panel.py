@@ -1,3 +1,4 @@
+import logging
 from kcontroller.panels import Panel
 
 
@@ -13,4 +14,4 @@ class MainControlPanel(Panel):
 
     def _handle_io_changes(self, changes):
         #TODO: implement IO changes handling in MainControlPanel
-        pass
+        logging.debug("input changes received: %s" % changes)

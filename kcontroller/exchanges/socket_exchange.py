@@ -38,6 +38,7 @@ class SocketExchange(KProcess):
         self._server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._server_socket.bind(('', self._port))
         self._server_socket.listen(10)
+        logging.info("listening for exchange connections on port %s" % self._port)
 
     def _accept_socket(self):
         connection_socket, addr = self._server_socket.accept()

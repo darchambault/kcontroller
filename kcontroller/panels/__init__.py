@@ -16,7 +16,8 @@ class Panel(KProcess):
             while True:
                 self._check_for_exchange_packets()
                 changes = self._io_handler.recv()
-                self._handle_io_changes(changes)
+                if changes:
+                    self._handle_io_changes(changes)
                 sleep(0.05)
         except KeyboardInterrupt:
             logging.info("Received SIGINT signal, shutting down...")
@@ -62,7 +63,11 @@ class Panel(KProcess):
 
     def _handle_io_changes(self, changes):
         """
-        Called on every main loop iteration with any/all IO changes - to be overridden in class implementations
+        Called on every main loop iteration with any/all input changes - to be overridden in class implementations
+
+        :param changes: list of InputChange objects
+        :type changes: list
+        :return:
         """
         pass
 
