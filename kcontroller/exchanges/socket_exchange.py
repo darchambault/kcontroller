@@ -63,6 +63,9 @@ class SocketExchange(KProcess):
             elif isinstance(packet, packets.CommandEnd):
                 # do nothing, since Telemachus does not support command duration
                 pass
+            else:
+                logging.warning("packet type %s is unimplemented" % packet.__class__.__name__)
+                logging.debug("unimplemented packet: %s" % (repr(packet)))
 
     def _receive_socket_data(self, sock):
         try:
