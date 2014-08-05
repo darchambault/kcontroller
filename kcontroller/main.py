@@ -15,22 +15,37 @@ def _init_logging():
     logging.config.fileConfig(logging_conf_file, disable_existing_loggers=False)
 
 
-def run():
-    _init_logging()
-    logging.info("Starting up")
+def _start_exchange():
+    exchange = SocketExchange(1414)
+    exchange.start()
+    exchange_connection = exchange.get_parent_connection()
+    return exchange, exchange_connection
 
+
+def _start_panels():
     panels = PanelPool()
     in_filename = os.path.join(tempfile.gettempdir(), "main_control_panel.in")
     out_filename = os.path.join(tempfile.gettempdir(), "main_control_panel.out")
     panels.add(MainControlPanel(FileIOHandler(in_filename, out_filename)))
     panels.start()
+    return panels
 
-    exchange = SocketExchange(1414)
-    exchange.start()
-    exchange_connection = exchange.get_parent_connection()
+
+def run():
+    _init_logging()
+    logging.info("Starting up")
+
+    panels = _start_panels()
+
+    exchange, exchange_connection = _start_exchange()
 
     try:
         while True:
+            if not exchange.is_alive():
+                exchange, exchange_connection = _start_exchange()
+
+            #TODO: handle panel process crashing (restart it automatically? maybe just don't use processes for panels?)
+
             panel_connections = panels.get_parent_connections()
 
             read_connections, = select.select(panel_connections + [exchange_connection], [], [])[:1]

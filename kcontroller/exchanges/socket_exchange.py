@@ -27,10 +27,17 @@ class SocketExchange(KProcess):
                     while self._socket_connection:
                         read_sockets, = select.select([self._socket_connection, self._connection], [], [])[:1]
                         for sock in read_sockets:
-                            if sock == self._connection:
-                                self._receive_panel_packet()
-                            else:
-                                self._receive_socket_data(sock)
+                            try:
+                                if sock == self._connection:
+                                    self._receive_panel_packet()
+                                else:
+                                    try:
+                                        self._receive_socket_data(sock)
+                                    except ValueError as e:
+                                        logging.warning("error parsing received JSON data: %s" % e.message)
+                            except socket.error as e:
+                                logging.warning("socket error %s: %s" % (e.__class__.__name__, e.message))
+                                self._close_socket(sock)
         except KeyboardInterrupt:
             logging.info("Received SIGINT signal, shutting down...")
 
