@@ -5,9 +5,11 @@ import logging.config
 import select
 
 from kcontroller.exchanges.socket_exchange import SocketExchange
+from kcontroller.exchanges.websocket_exchange import WebSocketExchange
 from kcontroller.panels import PanelPool
-from kcontroller.panels.main_control_panel import MainControlPanel
+from kcontroller.panels.io_handlers.teensy import TeensyHidIOHandler
 from kcontroller.panels.io_handlers.file import FileIOHandler
+from kcontroller.panels.main_control_panel import MainControlPanel
 
 
 def _init_logging():
@@ -17,6 +19,7 @@ def _init_logging():
 
 def _start_exchange():
     exchange = SocketExchange(1414)
+    # exchange = WebSocketExchange("ws://192.168.1.100:8085/datalink")
     exchange.start()
     exchange_connection = exchange.get_parent_connection()
     return exchange, exchange_connection
@@ -27,6 +30,7 @@ def _start_panels():
     in_filename = os.path.join(tempfile.gettempdir(), "main_control_panel.in")
     out_filename = os.path.join(tempfile.gettempdir(), "main_control_panel.out")
     panels.add(MainControlPanel(FileIOHandler(in_filename, out_filename)))
+    # panels.add(MainControlPanel(TeensyHidIOHandler(in_filename, out_filename)))
     panels.start()
     return panels
 

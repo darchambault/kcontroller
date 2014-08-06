@@ -10,7 +10,7 @@ class MainControlPanel(Panel):
     SWITCH_STAGING_ARMED = 4
 
     def _exchange_available(self):
-        self._subscribe_dataref("v.altitude")
+        self._subscribe_dataref("f.sas")
 
     def _handle_io_changes(self, changes):
         #TODO: implement IO changes handling in MainControlPanel
