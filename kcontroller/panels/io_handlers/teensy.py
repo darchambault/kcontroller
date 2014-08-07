@@ -28,4 +28,4 @@ class TeensyHidIOHandler(ByteIOHandler):
         :param data: data to be sent, in string form
         :type data: str
         """
-        self._teensy.send(data, len(data), 100)
+        self._teensy.send(data, 100)

@@ -1,0 +1,2 @@
+exchange:
+  type: exchanges.socket_exchange.SocketExchange

@@ -62,7 +62,7 @@ class ByteIOHandler(IOHandler):
 
         for i, payload in enumerate(payloads):
             if len(payload) < self._packet_size:
-                payloads[i] += "0" * (self._packet_size - len(payload))
+                payloads[i] += "\x00" * (self._packet_size - len(payload))
 
         for payload in payloads:
             self._send_data(payload)
@@ -104,8 +104,8 @@ class ByteIOHandler(IOHandler):
         changed_inputs = []
         for i, value in enumerate(packet):
             if not self._previous_values or i >= len(self._previous_values) or value != self._previous_values[i]:
-                previous_value = self._previous_values[i] if i < len(self._previous_values) else None
-                changed_inputs.append(InputChange(i, value, previous_value))
+                previous_value = ord(self._previous_values[i]) if i < len(self._previous_values) else None
+                changed_inputs.append(InputChange(i, ord(value), previous_value))
         self._previous_values = packet
         return changed_inputs
 

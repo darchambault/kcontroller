@@ -39,6 +39,8 @@ class WebSocketExchange(KProcess):
             logging.debug("received packet from panels: %s" % packet)
             if isinstance(packet, packets.DataSubscribeRequest):
                 self._send_websocket_data({"+": [packet.get_dataref()]})
+            elif isinstance(packet, packets.DataWrite):
+                self._send_websocket_data({"run": ["%s[%s]" % (packet.get_dataref(), packet.get_value())]})
             elif isinstance(packet, packets.CommandStart):
                 self._send_websocket_data({"run": [packet.get_command()]})
             elif isinstance(packet, packets.CommandEnd):

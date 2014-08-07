@@ -18,8 +18,8 @@ def _init_logging():
 
 
 def _start_exchange():
-    exchange = SocketExchange(1414)
-    # exchange = WebSocketExchange("ws://192.168.1.100:8085/datalink")
+    # exchange = SocketExchange(1414)
+    exchange = WebSocketExchange("ws://192.168.1.100:8085/datalink")
     exchange.start()
     exchange_connection = exchange.get_parent_connection()
     return exchange, exchange_connection
@@ -30,7 +30,7 @@ def _start_panels():
     in_filename = os.path.join(tempfile.gettempdir(), "main_control_panel.in")
     out_filename = os.path.join(tempfile.gettempdir(), "main_control_panel.out")
     panels.add(MainControlPanel(FileIOHandler(in_filename, out_filename)))
-    # panels.add(MainControlPanel(TeensyHidIOHandler(in_filename, out_filename)))
+    # panels.add(MainControlPanel(TeensyHidIOHandler(0x16c0, 0x0486)))
     panels.start()
     return panels
 

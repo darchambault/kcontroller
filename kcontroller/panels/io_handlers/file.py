@@ -9,8 +9,8 @@ class FileIOHandler(ByteIOHandler):
         self._out_filename = out_filename
         open(self._in_filename, 'w').close()
         open(self._out_filename, 'w').close()
-        logging.debug("listening on %s" % self._in_filename)
-        logging.debug("writing to %s" % self._out_filename)
+        logging.info("listening on %s" % self._in_filename)
+        logging.info("writing to %s" % self._out_filename)
 
     def _recv_data(self, size):
         """
@@ -33,7 +33,7 @@ class FileIOHandler(ByteIOHandler):
         :param data: data to be sent, in string form
         :type data: str
         """
-        data_hex = ' '.join(["%0.2X" % c for c in data])
-        f = open(self._out_filename, 'a')
+        data_hex = ' '.join(["%0.2X" % ord(c) for c in data])
+        f = open(self._out_filename, 'w')
         f.write(data_hex+"\n")
         f.close()

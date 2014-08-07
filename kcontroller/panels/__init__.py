@@ -15,6 +15,7 @@ class Panel(KProcess):
         try:
             while True:
                 self._check_for_exchange_packets()
+                self._update_device_outputs(self._dataref_subscriptions)
                 changes = self._io_handler.recv()
                 if changes:
                     self._handle_io_changes(changes)
@@ -52,6 +53,7 @@ class Panel(KProcess):
 
     def _unsubscribe_dataref(self, dataref):
         if dataref in self._dataref_subscriptions:
+            self._send_event(packets.DataUnsubscribeRequest(dataref))
             del self._dataref_subscriptions[dataref]
 
     def _update_dataref(self, dataref, value):
@@ -61,13 +63,21 @@ class Panel(KProcess):
         else:
             logging.warning("received unexpected update for dataref %s" % dataref)
 
+    def _update_device_outputs(self, data):
+        """
+        Called on every main loop iteration with any/all values of subscribed datarefs - to be overridden in class implementations
+
+        :param data: dict with the dataref as the key, and the dataref's value
+        :type data: dict
+        """
+        pass
+
     def _handle_io_changes(self, changes):
         """
         Called on every main loop iteration with any/all input changes - to be overridden in class implementations
 
         :param changes: list of InputChange objects
         :type changes: list
-        :return:
         """
         pass
 

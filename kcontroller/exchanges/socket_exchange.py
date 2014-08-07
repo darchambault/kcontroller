@@ -40,6 +40,9 @@ class SocketExchange(KProcess):
                                 self._close_socket(sock)
         except KeyboardInterrupt:
             logging.info("Received SIGINT signal, shutting down...")
+            if self._socket_connection:
+                self._socket_connection.close()
+            self._server_socket.close()
 
     def _initialize_socket(self):
         self._server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
