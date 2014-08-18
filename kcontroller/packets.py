@@ -28,6 +28,14 @@ class CommandEnd(Packet):
         return self._command
 
 
+class CommandOnce(Packet):
+    def __init__(self, command):
+        self._command = command
+
+    def get_command(self):
+        return self._command
+
+
 class DataWrite(Packet):
     def __init__(self, dataref, value):
         self._dataref = dataref
