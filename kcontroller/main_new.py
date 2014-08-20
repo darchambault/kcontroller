@@ -557,7 +557,8 @@ class KerbalTelemachusExchange(Exchange):
         "sim/cockpit/sas/actuators/toggle": "f.stage",
         "sim/cockpit/sas/state": "v.sasValue",
         "sim/cockpit/rcs/state": "v.rcsValue",
-        }
+    }
+
     __key_map = dict((v, k) for k, v in __dataref_map.iteritems())
 
     def __init__(self, ws_url, *args, **kwargs):
