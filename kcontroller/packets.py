@@ -4,20 +4,15 @@ class Packet(object):
     pass
 
 
-class ExchangeAvailable(Packet):
-    pass
-
-
-class ExchangeUnavailable(Packet):
-    pass
-
-
 class CommandStart(Packet):
     def __init__(self, command):
         self._command = command
 
     def get_command(self):
         return self._command
+
+    def __str__(self):
+        return "<%s %s>" % (self.__class__.__name__, self._command)
 
 
 class CommandEnd(Packet):
@@ -27,6 +22,9 @@ class CommandEnd(Packet):
     def get_command(self):
         return self._command
 
+    def __str__(self):
+        return "<%s %s>" % (self.__class__.__name__, self._command)
+
 
 class CommandOnce(Packet):
     def __init__(self, command):
@@ -35,17 +33,19 @@ class CommandOnce(Packet):
     def get_command(self):
         return self._command
 
+    def __str__(self):
+        return "<%s %s>" % (self.__class__.__name__, self._command)
+
 
 class DataWrite(Packet):
-    def __init__(self, dataref, value):
+    def __init__(self, dataref):
         self._dataref = dataref
-        self._value = value
 
     def get_dataref(self):
         return self._dataref
 
-    def get_value(self):
-        return self._value
+    def __str__(self):
+        return "<%s %s>" % (self.__class__.__name__, self._dataref)
 
 
 class DataSubscribeRequest(Packet):
@@ -55,22 +55,20 @@ class DataSubscribeRequest(Packet):
     def get_dataref(self):
         return self._dataref
 
-
-class DataUnsubscribeRequest(Packet):
-    def __init__(self, dataref):
-        self._dataref = dataref
-
-    def get_dataref(self):
-        return self._dataref
+    def __str__(self):
+        return "<%s %s>" % (self.__class__.__name__, self._dataref)
 
 
-class DataUpdate(Packet):
-    def __init__(self, dataref, value):
-        self._dataref = dataref
-        self._value = value
+class SimulationStart(Packet):
+    def __str__(self):
+        return "<%s>" % self.__class__.__name__
 
-    def get_dataref(self):
-        return self._dataref
 
-    def get_value(self):
-        return self._value
+class SimulationStop(Packet):
+    def __str__(self):
+        return "<%s>" % self.__class__.__name__
+
+
+class Shutdown(Packet):
+    def __str__(self):
+        return "<%s>" % self.__class__.__name__
