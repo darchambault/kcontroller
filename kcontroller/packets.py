@@ -4,7 +4,7 @@ class Packet(object):
     pass
 
 
-class CommandStart(Packet):
+class CommandBegin(Packet):
     def __init__(self, command):
         self._command = command
 

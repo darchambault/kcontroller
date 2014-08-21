@@ -1,15 +1,11 @@
-import os
-import tempfile
-import pkg_resources
+import logging
 import logging.config
-import select
-
-from kcontroller.exchanges.socket_exchange import SocketExchange
-from kcontroller.exchanges.websocket_exchange import WebSocketExchange
-from kcontroller.panels import PanelPool
-from kcontroller.panels.io_handlers.teensy import TeensyHidIOHandler
-from kcontroller.panels.io_handlers.file import FileIOHandler
-from kcontroller.panels.main_control_panel import MainControlPanel
+import pkg_resources
+from kcontroller import PollableQueue
+from kcontroller.exchanges.kerbal_telemachus import KerbalTelemachusExchange
+from kcontroller.exchanges.inet_socket import InetSocketExchange
+from kcontroller.panel_drivers.inet_socket import InetSocketPanelDriver
+from kcontroller.panel_drivers.teensy import TeensyPanelDriver
 
 
 def _init_logging():
@@ -17,54 +13,24 @@ def _init_logging():
     logging.config.fileConfig(logging_conf_file, disable_existing_loggers=False)
 
 
-def _start_exchange():
-    # exchange = SocketExchange(1414)
-    exchange = WebSocketExchange("ws://192.168.1.100:8085/datalink")
-    exchange.start()
-    exchange_connection = exchange.get_parent_connection()
-    return exchange, exchange_connection
-
-
-def _start_panels():
-    panels = PanelPool()
-    in_filename = os.path.join(tempfile.gettempdir(), "main_control_panel.in")
-    out_filename = os.path.join(tempfile.gettempdir(), "main_control_panel.out")
-    panels.add(MainControlPanel(FileIOHandler(in_filename, out_filename)))
-    # panels.add(MainControlPanel(TeensyHidIOHandler(0x16c0, 0x0486)))
-    panels.start()
-    return panels
-
-
 def run():
     _init_logging()
-    logging.info("Starting up")
 
-    panels = _start_panels()
+    # drivers_to_load = [(TeensyPanelDriver, (), {"vid": 0x16c0, "pid": 0x0488})]
+    drivers_to_load = [(InetSocketPanelDriver, (('', 1566), ), {})]
+    # exchange_to_load = (KerbalTelemachusExchange, ("ws://192.168.1.100:8085/datalink", ), {})
+    exchange_to_load = (InetSocketExchange, (('', 1565), ), {})
 
-    exchange, exchange_connection = _start_exchange()
+    panel_drivers = []
+    for driver_to_load in drivers_to_load:
+        logging.info("Starting panel driver %s" % driver_to_load[0].__name__)
+        driver = driver_to_load[0](*driver_to_load[1], inbound_queue=PollableQueue(), outbound_queue=PollableQueue(),
+                                   **driver_to_load[2])
+        driver.start()
+        panel_drivers.append(driver)
 
-    try:
-        while True:
-            if not exchange.is_alive():
-                exchange, exchange_connection = _start_exchange()
-
-            #TODO: handle panel process crashing (restart it automatically? maybe just don't use processes for panels?)
-
-            panel_connections = panels.get_parent_connections()
-
-            read_connections, = select.select(panel_connections + [exchange_connection], [], [])[:1]
-
-            for connection in read_connections:
-                packet = connection.recv()
-                if connection == exchange_connection:
-                    logging.debug("received packet from exchange: %s" % packet)
-                    panels.broadcast(packet)
-                else:
-                    logging.debug("received packet from panels: %s" % packet)
-                    panels.panel_packet_sent(packet, connection)
-                    exchange_connection.send(packet)
-    except KeyboardInterrupt:
-        logging.info("Received SIGINT signal, shutting down...")
+    exchange = exchange_to_load[0](panel_drivers=panel_drivers, *exchange_to_load[1], **exchange_to_load[2])
+    exchange.run()
 
 
 if __name__ == "__main__":
