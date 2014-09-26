@@ -16,10 +16,10 @@ def _init_logging():
 def run():
     _init_logging()
 
-    # drivers_to_load = [(TeensyPanelDriver, (), {"vid": 0x16c0, "pid": 0x0488})]
-    drivers_to_load = [(InetSocketPanelDriver, (('', 1566), ), {})]
-    # exchange_to_load = (KerbalTelemachusExchange, ("ws://192.168.1.100:8085/datalink", ), {})
-    exchange_to_load = (InetSocketExchange, (('', 1565), ), {})
+    drivers_to_load = [(TeensyPanelDriver, (), {"vid": 0x16c0, "pid": 0x0488})]
+    # drivers_to_load = [(InetSocketPanelDriver, (('', 1566), ), {})]
+    exchange_to_load = (KerbalTelemachusExchange, ("ws://192.168.1.100:8085/datalink", ), {})
+    # exchange_to_load = (InetSocketExchange, (('', 1565), ), {})
 
     panel_drivers = []
     for driver_to_load in drivers_to_load:
